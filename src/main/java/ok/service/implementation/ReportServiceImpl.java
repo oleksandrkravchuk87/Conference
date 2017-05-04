@@ -82,7 +82,7 @@ reportRepo.delete(id);
     }
 
     public List<Report> findAll() {
-        return null;
+        return reportRepo.findAll();
     }
 
     public List<Report> findBySpeaker(int id) {

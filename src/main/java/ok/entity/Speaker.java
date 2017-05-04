@@ -38,7 +38,7 @@ public class Speaker {
     @Temporal(TemporalType.DATE)
     private Date registrationDate;
 
-    @OneToMany (fetch = FetchType.EAGER)
+    @OneToMany (fetch = FetchType.EAGER, mappedBy = "speaker")
     private List<Report> reportList;
 
     public Speaker() {

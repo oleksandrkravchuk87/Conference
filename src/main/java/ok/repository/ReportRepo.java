@@ -16,9 +16,12 @@ import java.util.List;
 
 
 public interface ReportRepo extends JpaRepository<Report, Integer> {
-@Query("SELECT r FROM Report r WHERE r.speaker.id = :id")
+    @Query("SELECT r FROM Report r WHERE r.speaker.id = :id")
     List<Report> findBySpeaker (@Param("id") int id);
 
     @Query("SELECT r FROM Report r WHERE r.id = :id")
     Report findOne (@Param("id") int id);
+
+
+
 }

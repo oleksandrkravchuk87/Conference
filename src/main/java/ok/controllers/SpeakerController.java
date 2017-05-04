@@ -9,14 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -63,27 +61,29 @@ public class SpeakerController {
             speakerService.addOrEdit(speaker);
         }
         sendMessage(speaker.getEmail(),
-                "Congrats, " + speaker.getFirstName()+ " " + speaker.getSecondName() + ", you have successfully registrated on conference");
+                "Congrats, " + speaker.getFirstName()+ " " + speaker.getSecondName() + ", you have successfully registrated on SciCon 2017");
 
         return "redirect:/";
+    }
+
+    @RequestMapping(value = "/admin-registration", method = RequestMethod.POST)
+    public String adminRegistration (@ModelAttribute Speaker speaker, BindingResult bindingResult){
+        userValidator.validate(speaker, bindingResult);
+        if(bindingResult.hasErrors()){
+            return "redirect:/admin/allSpeakers";
+        }else{
+            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+            speaker.setPassword(bCryptPasswordEncoder.encode((speaker.getPassword())));
+            speakerService.addOrEdit(speaker);
+        }
+
+        return "redirect:/admin/allSpeakers";
     }
 
     @RequestMapping(value = "/loginpage", method = RequestMethod.GET)
     public String login() {
         return "views-speaker-login";
     }
-
-
-
-
-//    @RequestMapping (value = "/speaker/cabinet/{id}",method = RequestMethod.GET)
-//    public String cabinet (@PathVariable String id, Model model){
-//        Speaker speaker = speakerService.findOne(Integer.parseInt(id));
-//        model.addAttribute("speaker", speaker);
-//        model.addAttribute("spReports", reportService.findBySpeaker(Integer.parseInt(id)));
-//        return "views-speaker-cabinet";
-//    }
-
 
     @RequestMapping(value = "/cabinet", method = RequestMethod.GET)
     public String cabinet(Principal principal, Model model) {
@@ -109,42 +109,52 @@ public class SpeakerController {
     }
 
     @RequestMapping(value =  "/delete-report-{docId}" , method = RequestMethod.GET)
-    public String deleteRport(@PathVariable int docId) {
+    public String deleteReport(@PathVariable int docId, Principal principal) {
+        int speakerId = Integer.parseInt(principal.getName());
+        Report report = reportService.findOne(docId);
+        if (report.getSpeaker().getId()==speakerId){
         reportService.delete(docId);
-        return "redirect:/cabinet";
+        return "redirect:/cabinet";}
+        else {
+            return "views-base-403";
+        }
 
     }
+    @RequestMapping(value =  "/admin-delete-report-{docId}" , method = RequestMethod.GET)
+    public String adminDeleteReport(@PathVariable int docId, SecurityContextHolderAwareRequestWrapper request) {
+        boolean b = request.isUserInRole("ROLE_ADMIN");
+        if (b) {
+        reportService.delete(docId);
+        return "redirect:/admin/allReports";
+        }
+        else {
+            return "views-base-403";
+        }
+    }
 
-//
-//    @RequestMapping(value =  "/download/{speakerId}/{reportId}" , method = RequestMethod.GET)
-//    public String downloadReport(@PathVariable int speakerId, @PathVariable int reportId, HttpServletResponse response) throws IOException {
-//        Report report = reportService.findOne(reportId);
-//        response.setContentLength(report.getPresentation().length);
-//        response.setHeader("Content-Disposition","attachment; filename=\"" + report.getTitle() +"\"");
-//
-//        FileCopyUtils.copy(report.getPresentation(), response.getOutputStream());
-//
-//        return "redirect:/cabinet/"+speakerId;
-//    }
+    @RequestMapping(value =  "/admin-delete-speaker-report-{docId}" , method = RequestMethod.GET)
+    public String adminDeleteSpeakerReport(@PathVariable int docId, SecurityContextHolderAwareRequestWrapper request) {
+        boolean b = request.isUserInRole("ROLE_ADMIN");
+        if (b) {
+            reportService.delete(docId);
+            return "redirect:/admin/allSpeakers";
+        }
+        else {
+            return "views-base-403";
+        }
+    }
 
-
-
-
-
-
-    @RequestMapping(value = "/speaker/edit/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable String id, Model model) {
-        model.addAttribute("speaker", speakerService.findOne(Integer.parseInt(id)));
+    @RequestMapping(value = "/speaker/edit", method = RequestMethod.GET)
+    public String edit(Principal principal, Model model) {
+        model.addAttribute("speaker", speakerService.findOne(Integer.parseInt(principal.getName())));
         return "views-speaker-edit";
     }
 
     @RequestMapping(value = "/speaker/edit", method = RequestMethod.POST)
-    public String edit(@ModelAttribute Speaker speaker) {
-        speakerService.addOrEdit(speaker);
-        return "redirect:/speaker/page/" + String.valueOf(speaker.getId());
+    public String edit(Principal principal, @RequestParam("title")String title,@RequestParam("firstName")String firstName,@RequestParam("secondName")String secondName, @RequestParam("phone")String phone) {
+        speakerService.addOrEdit(Integer.parseInt(principal.getName()), title, firstName, secondName, phone);
+        return "redirect:/cabinet";
     }
-
-
 
     @RequestMapping(value =  "/cabinet/addReport" , method = RequestMethod.GET)
     public String addReport(Principal principal, Model model) {
@@ -160,8 +170,39 @@ public class SpeakerController {
         return "cabinet-add-report";
     }
 
+    @RequestMapping(value = "/admin/allSpeakers", method = RequestMethod.GET)
+    public String allReports(Model model) {
+        List<Speaker> speakerList = speakerService.findAll();
+        model.addAttribute("speakers", speakerList);
+        model.addAttribute("speaker", new Speaker());
+        return "views-admin-allSpeakers";
+    }
+
+    @RequestMapping(value =  "/admin-delete-speaker-{spId}" , method = RequestMethod.GET)
+    public String deleteSpeaker(@PathVariable int spId, SecurityContextHolderAwareRequestWrapper request) {
+        boolean b = request.isUserInRole("ROLE_ADMIN");
+        if (b){
+        speakerService.delete(spId);
+        return "redirect:/admin/allSpeakers";}
+        else {
+            return "views-base-403";
+        }
+    }
+
+    @RequestMapping(value = "/participants", method = RequestMethod.GET)
+    public String allParticipants(Model model) {
+        model.addAttribute("allParticipants", speakerService.allSpeakers());
+        model.addAttribute("participantsNumber", speakerService.participantsNumber());
+        return "views-speaker-participants";
+    }
 
 
+    @RequestMapping(value = "/participants-{page}-{proPage}", method = RequestMethod.GET)
+    public String allParticipants(@PathVariable int page, @PathVariable int proPage, Model model) {
+        model.addAttribute("allParticipants", speakerService.speakers(page, proPage));
+        model.addAttribute("participantsNumber", speakerService.participantsNumber());
+        return "views-speaker-participants";
+    }
 
 //    @RequestMapping(value =  "/delete/{userId}/{docId}" , method = RequestMethod.GET)
 //    public String deleteReport(@PathVariable int speakerId, @PathVariable int reportId) {
@@ -207,28 +248,27 @@ public class SpeakerController {
 //        document.setUser(user);
 //        userDocumentService.saveDocument(document);
 //    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//    @RequestMapping (value = "/speaker/cabinet/{id}",method = RequestMethod.GET)
+//    public String cabinet (@PathVariable String id, Model model){
+//        Speaker speaker = speakerService.findOne(Integer.parseInt(id));
+//        model.addAttribute("speaker", speaker);
+//        model.addAttribute("spReports", reportService.findBySpeaker(Integer.parseInt(id)));
+//        return "views-speaker-cabinet";
+//    }
+//
+//    @RequestMapping(value =  "/download/{speakerId}/{reportId}" , method = RequestMethod.GET)
+//    public String downloadReport(@PathVariable int speakerId, @PathVariable int reportId, HttpServletResponse response) throws IOException {
+//        Report report = reportService.findOne(reportId);
+//        response.setContentLength(report.getPresentation().length);
+//        response.setHeader("Content-Disposition","attachment; filename=\"" + report.getTitle() +"\"");
+//
+//        FileCopyUtils.copy(report.getPresentation(), response.getOutputStream());
+//
+//        return "redirect:/cabinet/"+speakerId;
+//    }
 
 
 
 
 
 }
-
-

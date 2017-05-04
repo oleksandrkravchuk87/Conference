@@ -70,6 +70,35 @@ public class ReportController {
         } else {
             model.addAttribute("searchResults", new ArrayList<Report>());
         }
-        return "views-base-searchResults";
+        return "views-base-fullTextSearch";
     }
+
+    @RequestMapping(value = "/admin/allReports", method = RequestMethod.GET)
+    public String allReports(Model model) {
+        List<Report> reportList = reportService.findAll();
+        model.addAttribute("reports", reportList);
+        return "views-admin-allReports";
+    }
+
+
+    @RequestMapping(value = "/report/adminNew", method = RequestMethod.POST)
+    public String addReport(@Valid Report report,
+                            BindingResult bindingResult,
+                            Principal principal, @RequestParam("title") String title, @RequestParam("annotation") String annotation, @RequestParam("speakerId") String speakerId, @RequestParam("presentation") MultipartFile multipartFile) {
+
+        if(multipartFile.getSize()==0){
+            bindingResult.rejectValue( "presentation","presentation.empty");
+            return "redirect:/cabinet";}
+
+        int speaker_id = Integer.valueOf(speakerId);
+
+        reportService.addOrEdit(title, annotation, multipartFile.getContentType(),  multipartFile, speaker_id);
+
+        sendMessage(speakerService.findOne(speaker_id).getEmail(),
+                "You have successfully submitted your report: "+title+".");
+
+        return "redirect:/admin/allReports";
+    }
+
+
 }

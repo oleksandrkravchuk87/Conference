@@ -8,8 +8,8 @@
        http://www.springframework.org/schema/security/spring-security.xsd">
 
     <security:http>
-      <security:intercept-url pattern="/" access="permitAll()"/>
-        <security:intercept-url pattern="/*/new" access="permitAll()"/>
+      <security:intercept-url pattern="/*" access="permitAll()"/>
+        <security:intercept-url pattern="/admin/*" access="hasRole('ROLE_ADMIN')"/>
 
         <security:form-login login-page="/loginpage" login-processing-url="/loginprocessing"/>
         <security:logout logout-url="/logout"/>

@@ -6,12 +6,28 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<footer style = "text-align:  center;
-padding-left: 10% ;
-padding-right: 10%
-">
-    <div style="margin-top: 50px;">
-        <H1>Footer</H1>
+<footer>
+        <div>
+                <table>
+                <tr>
+                    <td>
+                        <img width="25px" height="25px" src="/resources/images/mailPic.png">
+                    </td>
+                    <td>
+                        kravchuk.oleksandr@ukr.net
+                    </td>
+                </tr>
+                    <tr>
+                        <td>
+                            <img width="25px" height="25px" src="/resources/images/git1.png">
+                        </td>
+                        <td>
+                            oleksandrkravchuk87
+                        </td>
+                    </tr>
 
-    </div>
+                </table>
+
+
+        </div>
 </footer>

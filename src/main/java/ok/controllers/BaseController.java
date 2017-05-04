@@ -11,4 +11,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class BaseController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String Home (){return "views-base-home";}
+
+    @RequestMapping(value = "/admin/adminpage", method = RequestMethod.GET)
+    public String adminpage (){return "views-admin-adminpage";}
+
+    @RequestMapping(value = "/calendar", method = RequestMethod.GET)
+    public String Calendar (){return "views-base-calendar";}
+
+    @RequestMapping(value = "/location", method = RequestMethod.GET)
+    public String Location (){return "views-base-location";}
 }

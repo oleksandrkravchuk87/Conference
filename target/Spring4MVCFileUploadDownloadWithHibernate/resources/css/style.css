@@ -1,0 +1,188 @@
+#calTable {
+    width: 100%;
+}
+#calTable td {
+    width: 20%;
+    text-align: center;
+}
+#participantsTable {
+    width: 95%;
+    border: 1px solid #c5c5c5;
+    background:white;
+    border-collapse: collapse;
+    color: #454545;
+    margin-left: 2.5%;
+}
+#participantsTable tr {
+    padding: 3px;
+    border: 1px solid #c5c5c5;
+}
+#participantsTable tr td {
+    padding: 5px;
+
+
+}
+#participantsTable thead {
+    background-color: lightskyblue;
+    font-weight: bold;
+
+
+}
+#reportsTable thead {
+
+    font-weight: bold;
+
+
+}
+#participantsTable tr:hover {
+    background: #ededed;
+    color: black;
+}
+
+#reportsTable {
+    width: 95%;
+
+    background: white;
+    border-collapse: collapse;
+    color: #454545;
+    margin-left: 2.5%;
+}
+
+#reportsTable tr {
+    padding: 3px;
+
+}
+
+#reportsTable tr td {
+    padding: 5px;
+
+}
+
+#reportsTable tr:hover {
+    color: black;
+}
+
+input :invalid {
+    border: 1px solid red;
+}
+
+input:valid {
+    border: 1px solid dodgerblue;
+}
+textarea:valid {
+    border: 1px solid dodgerblue;
+}
+
+
+select:valid {
+    border: 1px solid dodgerblue;
+}
+
+.blueStripe {
+    height: 3px;
+    background-color: dodgerblue;
+}
+
+.location {
+    height: 300px;
+    padding-left: 5px;
+}
+
+.leftimg {
+    float: left;
+    margin: 7px 7px 7px 0;
+}
+
+
+body {
+    background: url("/resources/images/bg9.png");
+    width: 1000px;
+    alignment: center;
+    text-align:  center;
+    margin: auto;
+    font: 12px Tahoma, Arial, Helvetica, sans-serif;
+}
+
+.contentContainer {
+    min-height: 600px;
+    text-align: center;
+    align-content: center;
+}
+.formContainer {
+    text-align: center;
+    align-content: center;
+    padding-left: 50px;
+    padding-top: 20px;
+}
+#map {
+    height: 500px
+}
+
+form {
+    margin: 0px
+}
+
+.button {
+    background-color: white;
+    border: none;
+    color: dodgerblue;
+    padding: 0 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px;
+    line-height: 45px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: dodgerblue;
+    color: white;
+}
+
+.befor {
+    color: #454545;
+
+}
+
+.after {
+    color: #c5c5c5;
+}
+
+footer {
+    text-align: center;
+    height: 100px;
+    padding-left: 10%;
+    padding-right: 10%;
+    background-color: white;
+}
+
+#reportsTable {
+    width: 95%;
+
+    background: white;
+    border-collapse: collapse;
+    color: #454545;
+    margin-left: 2.5%;
+}
+
+#reportsTable tr {
+    padding: 3px;
+
+}
+
+#reportsTable tr td {
+    padding: 5px;
+
+}
+
+#reportsTable tr:hover {
+    color: black;
+}
+#buttom {
+    height: 20px;
+    width: 1000px;
+    margin: 0px;
+    padding: 0px;
+    background:  url('/resources/images/bottom.png') no-repeat;
+}

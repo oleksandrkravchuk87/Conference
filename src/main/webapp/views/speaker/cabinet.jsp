@@ -13,56 +13,86 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-    <title>Upload/Download/Delete Documents</title>
-<style>
+    <title>User's cabinet</title>
 
-    input :invalid {
-        border: 1px solid red;
-    }
-
-    input:valid {
-        border: 1px solid green;
-    }
-</style>
+    <%--Loading of the “edit of the users data”-block--%>
+    <script>
+        jQuery(window).ready(function () {jQuery("#divEdit").hide()});
+        jQuery(window).ready(function () {jQuery("#edit").click(function () {
+            jQuery("#divEdit").load("/speaker/edit #editPage",    function(){ jQuery("#divEdit").show("slow",
+                    function () {jQuery("#edit").hide("fast")})});
+        })});
+    </script>
 </head>
-<body>
 
-<div>${speaker.firstName}</div>
-<div>${speaker.secondName}</div>
-<div class="generic-container">
+<body>
+<div class="contentContainer">
+
+<table style="width: 100%">
+    <tr>
+        <td style="width: 50%;
+             text-align: center;">
+            <%--User data--%>
+            <h3>${speaker.title} ${speaker.firstName} ${speaker.secondName}</h3>
+            <h4>${speaker.email}</h4>
+
+            <div id="edit" class="button">edit profile</div>
+        </td>
+        <td style="width: 50%;
+        align-content: center;
+        ">
+            <%--Full-text search in all uploaded reports (title and annotation are used)--%>
+            <div id="search">
+                <form:form action="/search" method="post">
+
+                    <input id="query" name="query" size="30" required />
+                    <input style="border: none" class="button" type="submit" value="search" />
+                </form:form>
+            </div>
+        </td>
+    </tr>
+
+</table>
+
+    <%--“edit of the users data”-block--%>
+<div id="divEdit"></div>
+
+
+
+<div>
+    <hr>
     <div class="panel panel-default">
         <!-- Default panel contents -->
         <div class="panel-heading"><span class="lead">List of Documents </span></div>
-        <div class="tablecontainer">
-            <table class="table table-hover">
+        <c:if test="${empty spReports}">
+        <p>No uploaded documents...</p>
+        </c:if>
+        <c:if test="${not empty spReports}">
+        <div>
+            <table id = "reportsTable">
                 <thead>
                 <tr>
-                    <th>No.</th>
-                    <th>File Name</th>
-                    <th>Type</th>
-                    <th>Description</th>
-                    <th width="100"></th>
-                    <th width="100"></th>
+                    <td width="10%">No.</td>
+                    <td width="70%">File Name</td>
+                    <td width="10%"></td>
+                    <td width="10%"></td>
                 </tr>
                 </thead>
-                <tbody>
-
                 <c:forEach items="${spReports}" var="rep" varStatus="counter">
                     <tr>
-                        <td>${counter.index + 1}</td>
-                        <td>${rep.title}</td>
-                        <td>${rep.annotation}</td>
-
-                        <td><a href="<c:url value='/download-report-${rep.id}' />" class="btn btn-success custom-width">download</a></td>
-                        <td><a href="<c:url value='/delete-report-${rep.id}' />" class="btn btn-danger custom-width">delete</a></td>
+                        <td  width="10%">${counter.index + 1}</td>
+                        <td width="70%">${rep.title}</td>
+                        <td width="10%"><a href="<c:url value='/download-report-${rep.id}' />" class="button">download</a></td>
+                        <td width="10%"><a href="<c:url value='/delete-report-${rep.id}' />" class="button">delete</a></td>
                     </tr>
                 </c:forEach>
-                </tbody>
+
             </table>
         </div>
+        </c:if>
     </div>
-    <div class="panel panel-default">
-
+    <hr>
+     <div class ="formContainer">
         <div class="panel-heading"><span class="lead">Upload New Document</span></div>
         <div class="uploadcontainer">
             <form:form action="/report/new?${_csrf.parameterName}=${_csrf.token}" method="post" enctype="multipart/form-data">
@@ -70,29 +100,29 @@
                 <table cellpadding="5px">
                     <tr>
                         <td align="right">
-                            Назва:
+                            Title
                         </td>
                         <td align="left">
                             <form:errors path="title"/>
-                            <input type="text" name="title" minlength ="5" maxlength="100" required/>
+                            <input type="text" name="title" minlength ="5" maxlength="150" required/>
                         </td>
                     </tr>
                     <tr>
                         <td align="right">
-                            Опис:
+                            Annotation
                         </td>
                         <td align="left">
                             <form:errors path="discription"/>
-                            <textarea id="t3" name="annotation" minlength ="50" maxlength="2000" rows="5" required></textarea>
+                            <textarea id="t3" name="annotation" minlength ="50" maxlength="2000" rows="7" required></textarea>
                         </td>
                     </tr>
                     <tr>
                         <td align="right">
-                            Файл
+                            File
                         </td>
                         <td align="left">
                             <form:errors path="presentation"/>
-                            <input type="file" name="presentation" required>
+                            <input  type="file" name="presentation" required>
                         </td>
                     </tr>
 
@@ -102,7 +132,7 @@
 
                         </td>
                         <td align="left">
-                            <button type="submit">Додати</button>
+                            <button class="button" type="submit">add report</button>
                         </td>
                     </tr>
                 </table>
@@ -111,16 +141,9 @@
             </form:form>
         </div>
     </div>
-    <div class="well">
-        Go to <a href="<c:url value='/' />">Home</a>
-    </div>
-</div>
-<div id="search">
-    <form:form action="/search" method="post">
 
-        <input id="query" name="query" size="30" />
-        <input type="submit" value="Search" />
-    </form:form>
+
+</div>
 </div>
 </body>
 </html>

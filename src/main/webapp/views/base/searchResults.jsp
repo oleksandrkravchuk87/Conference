@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%--all reports related to the current user--%>
 <div class="tablecontainer">
     <table class="table table-hover">
         <thead>
@@ -20,7 +21,7 @@
         </tr>
         </thead>
         <tbody>
-
+<%--looping trough the uploaded-reports-list--%>
         <c:forEach items="${searchResults}" var="sr" varStatus="counter">
             <tr>
                 <td>${counter.index + 1}</td>
