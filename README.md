@@ -9,5 +9,4 @@ Used technologies:
 -	Hibernate 4 
 -	jQuery 1
 -	Maven 3 
--	Tomcat 7 
 -	MySQL 5 
