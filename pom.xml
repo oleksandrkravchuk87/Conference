@@ -292,6 +292,17 @@
         </pluginManagement>
         <finalName>Spring4MVCFileUploadDownloadWithHibernate</finalName>
     </build>
-
+<repositories>
+    <repository>
+        <id>spring-releases</id>
+        <url>https://repo.spring.io/libs-release</url>
+    </repository>
+</repositories>
+<pluginRepositories>
+    <pluginRepository>
+        <id>spring-releases</id>
+        <url>https://repo.spring.io/libs-release</url>
+    </pluginRepository>
+</pluginRepositories>
 
 </project>
